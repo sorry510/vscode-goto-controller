@@ -4,6 +4,7 @@ import { workspace, TextDocument, DocumentLink, Range, Uri } from 'vscode';
 import * as fs from 'fs';
 import * as readLine from 'n-readlines';
 
+const configurationNamespace = 'comiru_goto_controller';
 export class ControllerLink extends DocumentLink {
   filePath: string;
   funcName: string;
@@ -22,13 +23,12 @@ export class ControllerLink extends DocumentLink {
  * @param document
  */
 export function getFilePath(text: string, document: TextDocument) {
-  let strPathCtrl = workspace.getConfiguration('comiru_goto_controller').pathControllers || '/app/Http/Controllers,/app/Admin/Controllers,/src/App/Controller'; // default settings or user settings
+  let strPathCtrl = workspace.getConfiguration(configurationNamespace).pathControllers || '/app/Http/Controllers,/app/Admin/Controllers,/src/App/Controller'; // default settings or user settings
   for (let pathCtrl of strPathCtrl.split(',')) {
     let filePath = workspace.getWorkspaceFolder(document.uri).uri.fsPath + pathCtrl.trim();
     if (!fs.existsSync(filePath)) {
       continue;
     }
-    // split the method (if not a resource controller) from the controller name
     let controllerFileName = text.replace(/\./g, '/').replace(/\"|\'/g, '') + '.php';
 
     if (controllerFileName.includes('\\')) {
@@ -70,3 +70,5 @@ export function getLineNumber(text: string, path: string) {
     }
     return -1;
 }
+
+export const REG = /(['"])[^'"]*\1/g;

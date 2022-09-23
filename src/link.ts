@@ -1,19 +1,15 @@
 'use strict';
 
-import { workspace, Position, Range, CancellationToken, DocumentLink, DocumentLinkProvider, TextDocument, Uri, ProviderResult, commands } from 'vscode';
+import { Position, Range, CancellationToken, DocumentLink, DocumentLinkProvider, TextDocument, Uri, ProviderResult, commands } from 'vscode';
 import * as util from './util';
 
 export class LinkProvider implements DocumentLinkProvider {
-  /**
- * provideDocumentLinks
- */
   public provideDocumentLinks (document: TextDocument, token: CancellationToken): ProviderResult<DocumentLink[]> {
     let documentLinks = [];
     let index = 0;
-    let reg = /(['"])[^'"]*\1/g;
     while (index < document.lineCount) {
       let line = document.lineAt(index);
-      let result = line.text.match(reg);
+      let result = line.text.match(util.REG);
 
       if (result != null) {
         for (let item of result) {
@@ -53,7 +49,7 @@ export class LinkProvider implements DocumentLinkProvider {
         }
       }
       
-      // check for ClassName::class notation
+      // laravel ClassName::class
       if (line.text.includes('::class')) {
         let controllerName = line.text.substring(0, line.text.lastIndexOf('::class'));
         controllerName = controllerName.substring(controllerName.lastIndexOf(',') + 1).trim();
@@ -71,9 +67,6 @@ export class LinkProvider implements DocumentLinkProvider {
     return documentLinks;
   }
 
-  /**
-   * resolveDocumentLink
-   */
   public resolveDocumentLink (link: util.ControllerLink, token: CancellationToken): ProviderResult<DocumentLink> {
     let lineNum = util.getLineNumber(link.funcName, link.filePath);
     let path = link.filePath;
