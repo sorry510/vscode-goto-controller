@@ -2,7 +2,7 @@
     "name": "comiru-goto-controller",
     "displayName": "comiru-goto-controller",
     "description": "Alt + click to navigate from a route to a respective controller file",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "sorry510",
     "engines": {
         "vscode": "^1.18.0"

@@ -21,8 +21,9 @@ export class ControllerLink extends DocumentLink {
  * Finds the controller's filepath
  * @param text example A/FooController
  * @param document
+ * @param lineIndex
  */
-export function getFilePath(text: string, document: TextDocument) {
+export function getFilePath(text: string, document: TextDocument, lineIndex: number) {
   let strPathCtrl = workspace.getConfiguration(configurationNamespace).pathControllers || '/app/Http/Controllers,/app/Admin/Controllers,/src/App/Controller'; // default settings or user settings
   for (let pathCtrl of strPathCtrl.split(',')) {
     let filePath = workspace.getWorkspaceFolder(document.uri).uri.fsPath + pathCtrl.trim();
@@ -40,6 +41,30 @@ export function getFilePath(text: string, document: TextDocument) {
     if (fs.existsSync(targetPath)) {
       return targetPath;
     }
+    // match namespace
+    let namespace = '';
+    while(lineIndex >= 0 && namespace === '') {
+      let lineText = document.lineAt(lineIndex).text.trim();
+      if (!lineText.startsWith('//')) {
+        // the line is not annotation
+        let result = lineText.match(/'namespace'|"namespace"/);
+        if (result) {
+          lineText = lineText.substring(result.index + 11);
+          let matchNamespace = lineText.match(/(['"])[^'"]*\1/);
+          if (matchNamespace) {
+            namespace = matchNamespace[0].replace(/\"|\'/g, '').replace(/\\\\/g, '/').replace(/\\/, '/'); // TODO cache
+          }
+        }
+      }
+      lineIndex--;
+    }
+    if (namespace !== '') {
+      targetPath = filePath + '/' + namespace + '/' + controllerFileName;
+    }
+    if (fs.existsSync(targetPath)) {
+      return targetPath;
+    }
+
     let dirItems = fs.readdirSync(filePath);
     for (let item of dirItems) {
       targetPath = filePath + '/' + item + '/' + controllerFileName;

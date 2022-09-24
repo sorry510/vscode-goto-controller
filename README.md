@@ -12,5 +12,9 @@ scan controllers dir, Separate multiple configurations using commas (,)
 "comiru_goto_controller.pathControllers": "/app/Admin/Controllers,/app/Http/Controllers,/src/App/Controller"
 ```
 
+## bug
+
+if router has Multiple nested namespace, this is invalid
+
 
 

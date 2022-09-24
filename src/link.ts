@@ -11,34 +11,37 @@ export class LinkProvider implements DocumentLinkProvider {
       let line = document.lineAt(index);
       let result = line.text.match(util.REG);
 
-      if (result != null) {
+      if (result != null && result.length >= 2) {
         for (let item of result) {
           let controllerPath = undefined;
           let method = undefined;
-          if (item.includes('Controller')) {
-            if (item.includes('@')) {
-              // laravel router eg: A\FooController@bar
-              let splitted = item.replace(/\"|\'/g, '').split('@'); // 去除单双引号
-              [controllerPath, method] = splitted
-              if (splitted.length != 2 && splitted[0].includes('Controller')) {
-                method = 'index';
-              }
-            } else if (item.includes('::')) {
-              // comiru router eg: A\\FooController::bar
-              let splitted = item.replace(/\"|\'/g, '').replace(/\\\\/g, '/').split('::'); // 去除单双引号, 替换\\
-              [controllerPath, method] = splitted
-            } else if (line.text.includes('resource(')) {
-              // laravel eg: resource('foo', 'fooController');
-              controllerPath = item.replace(/\"|\'/g, '');
+          if (item.includes('@')) {
+            // laravel router eg: A\FooController@bar
+            let splitted = item.replace(/\"|\'/g, '').split('@'); // 去除单双引号
+            [controllerPath, method] = splitted
+            if (splitted.length != 2 && splitted[0].includes('Controller')) {
               method = 'index';
             }
+          } else if (item.includes('::')) {
+            // comiru router eg: A\\FooController::bar
+            let splitted = item.replace(/\"|\'/g, '').replace(/\\\\/g, '/').split('::'); // 去除单双引号, 替换\\
+            [controllerPath, method] = splitted
+          } else if (line.text.includes('resource(') ||
+                      line.text.includes('get(') ||
+                      line.text.includes('post(') ||
+                      line.text.includes('put(') ||
+                      line.text.includes('patch(') ||
+                      line.text.includes('delete(')) {
+            // laravel eg: resource('foo', 'fooController');
+            controllerPath = item.replace(/\"|\'/g, '').replace(/\\\\/g, '/');
+            method = '__invoke';
           }
 
           if (!controllerPath || !method) {
             continue;
           }
 
-          let filePath = util.getFilePath(controllerPath, document);
+          let filePath = util.getFilePath(controllerPath, document, index);
 
           if (filePath != null) {
             let start = new Position(line.lineNumber, line.text.indexOf(item) + 1);
@@ -53,7 +56,7 @@ export class LinkProvider implements DocumentLinkProvider {
       if (line.text.includes('::class')) {
         let controllerName = line.text.substring(0, line.text.lastIndexOf('::class'));
         controllerName = controllerName.substring(controllerName.lastIndexOf(',') + 1).trim();
-        let filePath = util.getFilePath(controllerName, document);
+        let filePath = util.getFilePath(controllerName, document, index);
 
         if (filePath != null) {
           let start = new Position(line.lineNumber, line.text.lastIndexOf('::class') - controllerName.length);
