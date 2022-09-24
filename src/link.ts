@@ -1,6 +1,6 @@
 'use strict';
 
-import { Position, Range, CancellationToken, DocumentLink, DocumentLinkProvider, TextDocument, Uri, ProviderResult, commands } from 'vscode';
+import { Position, Range, CancellationToken, DocumentLink, DocumentLinkProvider, TextDocument, Uri, ProviderResult } from 'vscode';
 import * as util from './util';
 
 export class LinkProvider implements DocumentLinkProvider {

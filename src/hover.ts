@@ -1,6 +1,6 @@
 'use strict';
 
-import { workspace, Position, Hover, HoverProvider as vsHoverProvider, TextDocument, ProviderResult, CancellationToken } from 'vscode';
+import { Position, Hover, HoverProvider as vsHoverProvider, TextDocument, ProviderResult, MarkdownString, Uri } from 'vscode';
 import * as util from './util';
 
 export class HoverProvider implements vsHoverProvider {
@@ -26,8 +26,10 @@ export class HoverProvider implements vsHoverProvider {
             }
             let filePath = util.getFilePath(controllerPath, document);
             if (filePath != null) {
-                let workspaceFolder = workspace.getWorkspaceFolder(document.uri);
-                return new Hover(workspaceFolder.name + filePath.replace(workspaceFolder.uri.fsPath, ''));
+                const textLink = Uri.file(filePath).toString();
+                return new Hover(new MarkdownString(`[comiru goto: ${text}](${textLink})`));
+                // let workspaceFolder = workspace.getWorkspaceFolder(document.uri);
+                // return new Hover(workspaceFolder.name + filePath.replace(workspaceFolder.uri.fsPath, ''));
             }
         }
         return;

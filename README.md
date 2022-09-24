@@ -2,7 +2,7 @@
 
 support silex and laravel
 
-ctrl + click to navigate from a route to a respective controller file.
+ctrl(cmd) + click to navigate from a route to a respective controller file.
 
 ## config
 
