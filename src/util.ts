@@ -42,9 +42,10 @@ export function getFilePath(text: string, document: TextDocument, lineIndex: num
       return targetPath;
     }
     // match namespace
+    let lineIndexCopy = lineIndex;
     let namespace = '';
-    while(lineIndex >= 0 && namespace === '') {
-      let lineText = document.lineAt(lineIndex).text.trim();
+    while(lineIndexCopy >= 0 && namespace === '') {
+      let lineText = document.lineAt(lineIndexCopy).text.trim();
       if (!lineText.startsWith('//')) {
         // the line is not annotation
         let result = lineText.match(/'namespace'|"namespace"/);
@@ -56,7 +57,7 @@ export function getFilePath(text: string, document: TextDocument, lineIndex: num
           }
         }
       }
-      lineIndex--;
+      lineIndexCopy--;
     }
     if (namespace !== '') {
       targetPath = filePath + '/' + namespace + '/' + controllerFileName;
@@ -65,13 +66,13 @@ export function getFilePath(text: string, document: TextDocument, lineIndex: num
       return targetPath;
     }
 
-    let dirItems = fs.readdirSync(filePath);
-    for (let item of dirItems) {
-      targetPath = filePath + '/' + item + '/' + controllerFileName;
-      if (fs.existsSync(targetPath)) {
-        return targetPath;
-      }
-    }
+    // let dirItems = fs.readdirSync(filePath);
+    // for (let item of dirItems) {
+    //   targetPath = filePath + '/' + item + '/' + controllerFileName;
+    //   if (fs.existsSync(targetPath)) {
+    //     return targetPath;
+    //   }
+    // }
   }
   return null;
 }

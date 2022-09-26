@@ -9,7 +9,7 @@ ctrl(cmd) + click to navigate from a route to a respective controller file.
 scan controllers dir, Separate multiple configurations using commas (,)
 
 ```
-"comiru_goto_controller.pathControllers": "/app/Admin/Controllers,/app/Http/Controllers,/src/App/Controller"
+"comiru_goto_controller.pathControllers": "/app/Admin/Controllers,/app/Admin/Controllers/Corporation,/app/Http/Controllers,/src/App/Controller"
 ```
 
 ## bug

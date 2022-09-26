@@ -2,7 +2,7 @@
     "name": "comiru-goto-controller",
     "displayName": "comiru-goto-controller",
     "description": "Alt + click to navigate from a route to a respective controller file",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "sorry510",
     "engines": {
         "vscode": "^1.18.0"
@@ -44,7 +44,7 @@
             "properties": {
                 "comiru_goto_controller.pathControllers": {
                     "type": "string",
-                    "default": "/app/Admin/Controllers,/app/Http/Controllers,/src/App/Controller",
+                    "default": "/app/Admin/Controllers,/app/Admin/Controllers/Corporation,/app/Http/Controllers,/src/App/Controller",
                     "description": "Root path to the controllers folder"
                 }
             }
